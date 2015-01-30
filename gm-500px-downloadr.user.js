@@ -3,7 +3,7 @@
 // @namespace   https://github.com/tsaiid/gm-500px-downloadr
 // @description Easy download of images from 500px w/ little UX enhancements. It's a clone of Depositado's "500px Download Images w/ various UX enhancements" script.
 // @include     https://500px.com/*
-// @version     1.8.20150131
+// @version     1.80.20150131
 // @grant       none
 // ==/UserScript==
 
