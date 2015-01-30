@@ -3,7 +3,7 @@
 // @namespace   https://github.com/tsaiid/gm-500px-downloadr
 // @description Easy download of images from 500px w/ little UX enhancements. It's a clone of Depositado's "500px Download Images w/ various UX enhancements" script.
 // @include     https://500px.com/*
-// @version     1.75
+// @version     1.8.20150131
 // @grant       none
 // ==/UserScript==
 
@@ -130,6 +130,7 @@ function download500px() {
         downloadLINK,
         pathArray,
         photoID,
+        apiUrl,
         photoContainerDiv,
         availHeight,
         downloadCursor,
@@ -137,9 +138,22 @@ function download500px() {
 
     // set vars
     THEphoto = $('.photo.segment img');
-    downloadLINK = THEphoto.attr('src').replace(/\/\d+\.jpg$/, "/2048.jpg");
-    pathArray = downloadLINK.split('/'); //photoID = PxInitialData['photo']['id'];
-    photoID = pathArray[3];
+    if (m = THEphoto.attr('src').match(/drscdn\.500px\.org\/photo\/(\d+)\//)) {
+        photoID = m[1];
+    } else if (m = THEphoto.attr('src').match(/ppcdn\.500px\.org\/(\d+)\//)) {
+        photoID = m[1];
+    }
+    console.log("photoID: " + photoID);
+    apiUrl = "https://api.500px.com/v1/photos/" + photoID + "?consumer_key=rZR2NrAPT8TOrZp4Hx14x8lW2vE484tv6wOnwF8K&image_size=3";
+    console.log("apiUrl: " + apiUrl);
+    $.get(apiUrl, function(data) {
+        if (data.error) {
+            console.log("apiUrl error: " + data.error);
+        } else {
+            downloadLINK = data.photo.image_url.replace(/\/\d+\.jpg/, "/2048.jpg");
+            console.log("downloadLINK: " + downloadLINK);
+        }
+    });
     photoContainerDiv = $('div.photo.segment');
     downloadCursor = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAQAAAAngNWGAAAB0UlEQVR4AXWRv0sbcRjGP/fDNOc1Ki2CabcDIVgLIsElRM8hm4MgDgW3oMXBg6T/gI6Cf0DAVeji4j9hiaJLKXapaTEZugQLQnt6P/oMCdWUPA/vy73f58MLL2fRl4FFBgeXnOoZNgaPZD75HhH4XGBO3dGk9H9ZjDKJd30Up3F6fYSnaRRrcKOB9pEl9/MlknpOk3ZiPAYN2cJW5D6MIKm7mmwslA1uzOiEbGQjqWc1ZZ5uFIQunnfb+93DhSLSQrF72N6fd4VaCBbYx7AvWTsOHcdFctzQWTu+BLuPmtjoCBzZal6VD27aSDft8kHzSogj6yhROEzwCq9UPKnvbuB7tdb31g+vhr+7cVIvFfGUTohinNcUGtW7Tutsbp0l/KntqW18lubWW2d3nUaVgohxmGT6ohElp+fLeyubVFikLC9SWdlc3js9j5KLBtOiyDMbJXEqy1uBUF+ubAX9tyhhlryJbv51S0/V1WDmgxzMVFfpSanuNsjz4svHwluG6uvnN+/omkSEzU+kDFOqNBTFGHlKvGeHGnVVIMu9aUdJScSYzT0G3+j0/oBEChhIJMTK//Cbe5sINIZYsiH/UyrH8oOYSBGmrK5iAFSRoCL5C67zl+gG1lV2AAAAAElFTkSuQmCC';
 
